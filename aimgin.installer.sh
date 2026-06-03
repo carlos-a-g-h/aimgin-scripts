@@ -57,9 +57,13 @@ AIMG_APPRUN="$AIMG_APPDIR"/AppRun
 # install using setup script
 
 SH_SETUP="$AIMG_APPDIR"/bin/setup
+
 if [ $ANY_AIMG -eq 0 ]
 then
-	if [ -f "$SH_SETUP" ]
+
+	if ! [ -f "$SH_SETUP" ]; then ANY_AIMG=1;fi
+
+	if [ $ANY_AIMG -eq 0 ]
 	then
 		export APPDIR="$AIMG_APPDIR"
 		if [ "$NO_SYMLINKS" -eq 1 ]
@@ -70,9 +74,22 @@ then
 			export URUNTIME=""
 			"$SH_SETUP" --install --force
 		fi
-	else
-		ANY_AIMG=1
 	fi
+
+	# if [ -f "$SH_SETUP" ]
+	# then
+	# 	export APPDIR="$AIMG_APPDIR"
+	# 	if [ "$NO_SYMLINKS" -eq 1 ]
+	# 	then
+	# 		export URUNTIME="$AIMG_APPRUN"
+	# 		"$SH_SETUP" --install --force --no-links
+	# 	else
+	# 		export URUNTIME=""
+	# 		"$SH_SETUP" --install --force
+	# 	fi
+	# else
+	# 	ANY_AIMG=1
+	# fi
 fi
 
 # install any kind of appimage

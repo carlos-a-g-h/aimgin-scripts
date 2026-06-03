@@ -28,7 +28,7 @@
 #
 # FORCE
 # Make shit happen
-# Convenient if ran by a GUI or if it's being ran unnatended/automated
+# Convenient if ran by a GUI or unnatended/automated
 # Unsafe when running manually or debugging
 
 if [ -z "$NO_SYMLINKS" ];then NO_SYMLINKS=0; fi
@@ -44,8 +44,22 @@ AIMG_FILEPATH=$(realpath -e "$1")
 
 # Temporary directory
 TMP=$(echo "$AIMG_FILEPATH"|md5sum|head -n1)
-TMP="${TMP:0:32}"
-TMP_DIR="/usr/appimages/""$TMP"
+TMP1="${TMP:0:32}"
+TMP_DIR="/usr/appimages/""$TMP1"
+
+_get_AIMG_NAME() {
+
+	if ! [ -z "$AIMG_NAME" ]; then exit 0; fi
+
+	SRC_NAME="$TMP_DIR""/_details/name.txt"
+	if [ -f "$SRC_NAME" ];
+	then
+		AIMG_NAME=$(sed -n 1p "$SRC_NAME")
+		if ! [ -z "$AIMG_NAME" ]; then exit 0; fi
+	fi
+
+	AIMG_NAME=$(basename "$AIMG_FILEPATH")
+}
 
 # NOTE:
 # Being an executable doesn't necessarily means that it's an AppImage, and in
@@ -120,22 +134,23 @@ fi
 
 ls -l "$TMP_DIR"
 
-if [ $DNC -eq 1 ]
+if [ "$DNC" -eq 1 ]
 then
 	echo "[!] Avoided jumping to the next step (exit zero)"
 	exit 0
 fi
 
-# TODO:
-# Find out where is AIMG_NAME and make AIMG_APPDIR
-# If AIMG_NAME is found, then move TMP_DIR to AIMG_APPDIR
-# If AIMG_NAME is NOT found anywhere, cancel everything and nuke TMP_DIR
-
 TMP=$(realpath -e "$0")
-TMP=$(dirname -z "$TMP")
-NEXT_STEP="$TMP"/"aimgin.installer.sh"
+TMP1=$(dirname -z "$TMP")
+NEXT_STEP="$TMP1"/"aimgin.installer.sh"
 
 set +e
+
+_get_AIMG_NAME
+
+AIMG_APPDIR="/usr/appimages/""$AIMG_NAME"".installed"
+if [ -d "$AIMG_APPDIR" ]; then rm -vrf "$AIMG_APPDIR";fi
+mv -v "$TMP_DIR" "$AIMG_APPDIR"
 
 export NO_SYMLINKS
 export ANY_AIMG
