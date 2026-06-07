@@ -1,6 +1,6 @@
-# AppImage Installation Scripts
+# AppImage "Installer"
 
-## About this project
+## About this repo
 
 I made an installer for AppImages, that is composed of two main scripts. These scripts install an AppImage by decompressing it and integrating it to the system. They can work with AppImages and AppDirs compressed as SQUASHFS files
 
@@ -32,7 +32,7 @@ The SQUASHFS compressed filesystem with decompressed AppImages (File B) is light
 
 ### Conclusion
 
-This is just yet another way to use AppImages, you can use it in a traditional setup if you think disk space is cheap (if you already use Flatpaks, you probably already think like that lmao), but the main reason for using these scripts is for bundling software in systems that are distributed in compressed media
+This is just yet another way to use AppImages, again, NOT recommended for traditional systems due to disk space usage, but you can use it in a traditional setup if you think disk space is cheap (if you already use Flatpaks or Snaps, you probably already think like that lmao)
 
 ## How to use
 
