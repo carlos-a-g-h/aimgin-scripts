@@ -36,6 +36,8 @@ This is just yet another way to use AppImages, again, NOT recommended for tradit
 
 ## How to use
 
+[![Watch the video](https://raw.githubusercontent.com/carlos-a-g-h/aimgin-scripts/refs/heads/main/Screenshot_20260607_175040_mpv.jpg)](ttps://ia902909.us.archive.org/5/items/appimage_installer_sh/appImage_installer_demo_by_carlos-a-g-h.mp4)
+
 ### Requirements
 
 The requirements depend on how much you want to do. If you want the full experience, install "yad" (for the UI), "wget" (to grab files from the internet using the UI) and "squashfs-tools" (for dealing with SQUASHFS files)
