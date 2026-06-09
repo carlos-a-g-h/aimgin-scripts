@@ -48,15 +48,11 @@ The requirements depend on how much you want to do. If you want the full experie
 
 ### Installation instructions
 
-Step 1: [Download this repo](https://github.com/carlos-a-g-h/aimgin-the-appimage-installer/archive/refs/heads/main.zip) and unzip it
+Step 1: [Download the repo](https://github.com/carlos-a-g-h/aimgin-the-appimage-installer/archive/refs/heads/main.zip) or git clone it and unzip it
 
 Step 2: Run "Setup.Install.desktop"
 
 Step 3: Run "aimgin.desktop" or "AIMGIN, The AppImage Installer" from your DE's app launcher
-
-### Easy mode
-
-If you really want to install decompressed AppImages on your normal system, you can use the UI script ( aimgin.ui_yad.sh ). This UI is a frontend for the scripts, it can even download any app file from the internet by giving it an HTTP link instead of a path on your system
 
 ### Hard mode
 
