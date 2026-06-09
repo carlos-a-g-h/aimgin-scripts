@@ -2,15 +2,23 @@
 
 # AppImage installer by github.com/carlos-a-g-h
 
-# Step (script) name: UI through YAD
-# Next step (script): Extractor
+# Script (step) name: YAD UI
+# Next script (step): Extractor
 # Launches a simple UI that runs the extractor and installer scripts
 # The UI can also download files from the internet
 
-# Installation directory
+# Print PWD
+echo "PWD is: $PWD"
+
+# Installation directory (you can change this)
 APPSDIR="/usr/appimages"
 
+# Cache directory (it should match the $PWD)
+CACHEDIR="/tmp/aimgin.cache"
+
 ################################################################################
+
+set -e
 
 if [ -z "$DEBUG" ];then DEBUG=0;fi
 if [ $DEBUG -eq 1 ]
@@ -23,6 +31,10 @@ then
 	echo "[!] Not running on a graphical environment"
 	exit 1
 fi
+
+mkdir -vp "$CACHEDIR"
+
+set +e
 
 MAINPROC=$(basename "$0")
 
@@ -174,7 +186,7 @@ function _get_file_from_web() {
 	if [ -z "$DL_DIR" ]
 	then
 		TMP="$(echo "$STR_LOCATION"|md5sum)"
-		DL_DIR="_download.""${TMP:0:32}"
+		DL_DIR="$CACHEDIR"/"_download.""${TMP:0:32}"
 	fi
 	mkdir -p "$DL_DIR"
 
@@ -191,9 +203,8 @@ function _get_file_from_web() {
 		return 1
 	fi
 	TMP=$(ls "$DL_DIR"|head -n1)
-	mv -vf "$DL_DIR"/"$TMP" "$TMP"
-	AIMG_FILEPATH=$(realpath -e "$TMP")
-
+	# mv -vf "$DL_DIR"/"$TMP" "$TMP"
+	AIMG_FILEPATH=$(realpath -e "$DL_DIR"/"$TMP")
 }
 
 function _get_file_from_fs() {
@@ -237,8 +248,11 @@ export NO_SYMLINKS=$CHK_NOSYMLINK
 export ANY_AIMG=$CHK_ANYIMG
 export DNC=0
 export FORCE=1
+
 export APPSDIR
 export MAINPROC
+export CACHEDIR
+export WRITE_RESULTS=1
 
 TMP=$(realpath -e "$0")
 TMP1=$(dirname "$TMP")
@@ -249,13 +263,30 @@ echo "[!] Running extractor"
 chmod +x "$NEXT_STEP"
 "$NEXT_STEP" "$AIMG_FILEPATH"
 
+set -e
+
 if [ $? -eq 0 ]
 then
-	yad --title="$UI_TITLE" \
-		--fixed --center \
-		--width=640 --height=480 \
-		--window-icon="$UI_ICON" \
-		--text "Successfully installed the application"
-fi
 
-# _reset_vars
+	# Grab results
+
+	AIMG_NAME=$(cat "$CACHEDIR"/"results.AIMG_NAME"|head -n1)
+	AIMG_APPDIR=$(cat "$CACHEDIR"/"results.AIMG_APPDIR"|head -n1)
+	ICON_FILEPATH=$(cat "$CACHEDIR"/"results.ICON_FILEPATH"|head -n1)
+
+	echo "$AIMG_NAME"
+	echo "$AIMG_APPDIR"
+	echo "$ICON_FILEPATH"
+
+	yad --title="$UI_TITLE" \
+		--image="$ICON_FILEPATH" \
+		--fixed --center \
+		--width=480 --height=240 \
+		--escape-ok \
+		--window-icon="$UI_ICON" \
+		--text "SUCCESSFULLY INSTALLED: $AIMG_NAME" \
+		--button="OK"
+
+	rm "$CACHEDIR"/results.*
+
+fi

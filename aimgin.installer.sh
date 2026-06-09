@@ -2,7 +2,7 @@
 
 # AppImage installer by github.com/carlos-a-g-h
 
-# Step (script) name: Installer
+# Script (step) name: Installer
 # Installs the contents of an AppDir into the system
 # Runs after the extractor step
 
@@ -18,6 +18,9 @@
 # AIMG_DESKTOP
 # Absolute file path or name of the dot Desktop file
 # If it's not given, it will be obtained during this step
+#
+# There are other env vars used by this script but those are a bit more
+# irrelevant for an end user
 
 if [ -z "$DEBUG" ];then DEBUG=0;fi
 if [ $DEBUG -eq 1 ]
@@ -25,10 +28,14 @@ then
 	set -x
 fi
 
-if [ -z "$APPSDIR" ];then APPSDIR="/usr/appimages";fi
 if [ -z "$NO_SYMLINKS" ];then NO_SYMLINKS=0; fi
 if [ -z "$ANY_AIMG" ];then ANY_AIMG=0; fi
 if [ -z "$AIMG_DESKTOP" ];then AIMG_DESKTOP=0; fi
+
+if [ -z "$APPSDIR" ];then APPSDIR="/usr/appimages";fi
+if [ -z "$CACHEDIR" ];then APPSDIR="/tmp/aimgin.cache";fi
+if [ -z "$WRITE_RESULTS" ];then WRITE_RESULTS=0;fi
+
 
 IS_MAINPROC=0
 TMP=$(basename "$0")
@@ -44,6 +51,8 @@ then
 		IS_MAINPROC=1
 	fi
 fi
+
+CACHEDIR="/tmp/aimgin.cache"
 
 # Essential functions
 
@@ -161,13 +170,15 @@ then
 	if [ -z "$ICON_FILENAME" ];then _util_explode "Icon filename unknown";fi
 
 	echo "ICON:$ICON_FILENAME:$SRC_DIRICON"
-	cp -va "$SRC_DIRICON" "/usr/share/icons/""$ICON_FILENAME"
+
+	ICON_FILEPATH="/usr/share/icons/""$ICON_FILENAME"
+
+	cp -va "$SRC_DIRICON" "$ICON_FILEPATH"
 
 	# Copy desktop file
 
 	TMP=$(basename "$AIMG_DESKTOP")
 	DESKTOP_OK="/usr/share/applications/""$TMP"
-	# cp -va "$AIMG_DESKTOP" "$DESKTOP_OK"
 
 	# Replace Exec with AppRun
 
@@ -175,9 +186,18 @@ then
 
 	cat "$AIMG_DESKTOP"|sed 's:'"$TMP"':Exec='"$AIMG_APPRUN"':' > "$DESKTOP_OK"
 
-	# cp -va "$AIMG_DESKTOP" "$DESKTOP_OK"
-	# sed -i 's:'"$TMP"':Exec='"$AIMG_APPRUN"':' "$DESKTOP_OK"
 	chmod +x "$DESKTOP_OK"
+fi
+
+# Add Icon to results
+
+if [ $WRITE_RESULTS -eq 1 ]
+then
+
+	TMP="$(realpath -e "$AIMG_APPDIR"/".DirIcon")"
+
+	echo "$TMP" > "$CACHEDIR"/"results.ICON_FILEPATH"
+
 fi
 
 if [ $IS_MAINPROC -eq 1 ]
