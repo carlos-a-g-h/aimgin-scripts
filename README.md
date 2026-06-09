@@ -48,7 +48,7 @@ The requirements depend on how much you want to do. If you want the full experie
 
 ### Installation instructions
 
-Step 1: Download the repo
+Step 1: [Download this repo](https://github.com/carlos-a-g-h/aimgin-the-appimage-installer/archive/refs/heads/main.zip) and unzip it
 
 Step 2: Run "Setup.Install.desktop"
 
