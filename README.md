@@ -1,4 +1,4 @@
-# AppImage "Installer"
+# AIMGIN, The AppImage "Installer"
 
 ## About this repo
 
@@ -46,9 +46,13 @@ The video was uploaded to [archive dot org](https://archive.org/details/appimage
 
 The requirements depend on how much you want to do. If you want the full experience, install "yad" (for the UI), "wget" (to grab files from the internet using the UI) and "squashfs-tools" (for dealing with SQUASHFS files)
 
-### Easy mode
+### Installation instructions
 
-If you really want to install decompressed AppImages on your normal system, you can use the UI script ( aimgin.ui_yad.sh ). This UI is a frontend for the scripts, it can even download any app file from the internet by giving it an HTTP link instead of a path on your system
+Step 1: [Download the repo](https://github.com/carlos-a-g-h/aimgin-the-appimage-installer/archive/refs/heads/main.zip) or git clone it and unzip it
+
+Step 2: Run "Setup.Install.desktop"
+
+Step 3: Run "aimgin.desktop" or "AIMGIN, The AppImage Installer" from your DE's app launcher
 
 ### Hard mode
 

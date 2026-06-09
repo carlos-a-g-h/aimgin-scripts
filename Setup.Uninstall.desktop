@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=true
+StartupNotify=false
+Name=AIMGIN Setup. Uninstaller
+Comment=Uninstalls AIMGIN from your system
+Icon=applications-other
+Exec=bash -ic "export INTERACTIVE=1;./Setup.Uninstall.sh"
+Categories=System;Other;

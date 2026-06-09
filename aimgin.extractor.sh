@@ -2,8 +2,8 @@
 
 # AppImage installer by github.com/carlos-a-g-h
 
-# Step (script) name: Extractor
-# Next step (script): Installer
+# Script (step) name: Extractor
+# Next script (step): Installer
 # Extracts the contents of a selected AppImage or a compressed AppDir
 # It also determines the name of the AppImage as an application before
 # running the actual installation script
@@ -46,6 +46,8 @@ if [ -z "$DNC" ];then DNC=0; fi
 if [ -z "$FORCE" ];then FORCE=0; fi
 
 if [ -z "$APPSDIR" ];then APPSDIR="/usr/appimages";fi
+if [ -z "$CACHEDIR" ];then APPSDIR="/tmp/aimgin.cache";fi
+if [ -z "$WRITE_RESULTS" ];then WRITE_RESULTS=0;fi
 
 IS_MAINPROC=0
 TMP=$(basename "$0")
@@ -267,6 +269,16 @@ TMP=$(echo "$AIMG_DESKTOP"|sed "s:$TMP_NAME:$AIMG_NAME.installed:g")
 AIMG_DESKTOP=$(echo "$TMP"|head -n1)
 echo "TO:$AIMG_DESKTOP"
 
+# Write known results
+
+if [ $WRITE_RESULTS -eq 1 ]
+then
+	echo "$AIMG_NAME" > "$CACHEDIR"/"results.AIMG_NAME"
+	echo "$AIMG_APPDIR" > "$CACHEDIR"/"results.AIMG_APPDIR"
+fi
+
+# Run next script
+
 set +e
 
 export NO_SYMLINKS
@@ -274,8 +286,10 @@ export ANY_AIMG
 export AIMG_NAME
 export AIMG_DESKTOP
 
+export CACHEDIR
 export APPSDIR
 export MAINPROC
+export WRITE_RESULTS
 
 chmod +x "$NEXT_STEP"
 "$NEXT_STEP" "$AIMG_NAME" "$AIMG_APPDIR"
