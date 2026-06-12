@@ -16,6 +16,6 @@ AIMGIN removed"
 if [ -z "$INTERACTIVE" ];then INTERACTIVE=0;fi
 if [ $INTERACTIVE -eq 1 ]
 then
-	echo "Press ENTER to close"
-	read
+	echo "Press any key to close"
+	read -n1
 fi
