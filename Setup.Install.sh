@@ -6,20 +6,20 @@ set -e
 
 TMP=$(realpath -e "$0")
 CURRDIR=$(dirname "$TMP")
+DPATH_INST="/usr/lib/aimgin"
+DPATH_DESK="/usr/share/applications"
 
-mkdir -vp /usr/lib/aimgin/
+mkdir -vp "$DPATH_INST"
 
-cp -va aimgin.extractor.sh /usr/lib/aimgin/
-cp -va aimgin.installer.sh /usr/lib/aimgin/
-cp -va aimgin.ui_yad.sh /usr/lib/aimgin/
+cp -va aimgin.*.sh "$DPATH_INST"/
 
-chmod +x /usr/lib/aimgin/aimgin.*
+chmod +x "$DPATH_INST"/aimgin.*
 
-cp -va aimgin.desktop /usr/share/applications/
+cp -va aimgin.desktop "$DPATH_DESK"/
 
-chmod +x /usr/share/applications/aimgin.desktop
+chmod +x "$DPATH_DESK"/aimgin.desktop
 
-ls -l /usr/share/applications/aimgin.desktop
+ls -l "$DPATH_DESK"/aimgin.desktop
 
 echo "
 AIMGIN installed!"
@@ -27,6 +27,6 @@ AIMGIN installed!"
 if [ -z "$INTERACTIVE" ];then INTERACTIVE=0;fi
 if [ $INTERACTIVE -eq 1 ]
 then
-	echo "Press ENTER to close"
-	read
+	echo "Press any key to close"
+	read -n1
 fi

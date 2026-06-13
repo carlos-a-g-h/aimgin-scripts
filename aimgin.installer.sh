@@ -97,9 +97,12 @@ function _get_AIMG_DESKTOP() {
 	fi
 
 	SEL_APPDIR="$AIMG_APPDIR"
-	if ! [ $(find "$SEL_APPDIR"|grep ".desktop$"|wc -l) -eq 1 ]; then _util_explode "Desktop file not found???";fi
-	TMP=$(find "$SEL_APPDIR"|grep ".desktop$"|head -n1)
-	AIMG_DESKTOP=$(realpath -e "$TMP")
+
+	QTTY=$(ls "$SEL_APPDIR"|grep ".desktop$"|wc -l)
+	if ! [ $QTTY -eq 1 ]; then _util_explode "Desktop file not found??? (from installer)";fi
+	TMP=$(ls "$SEL_APPDIR"|grep ".desktop$"|head -n1)
+	AIMG_DESKTOP=$(realpath -e "$SEL_APPDIR"/"$TMP")
+
 }
 
 ###############################################################################

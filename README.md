@@ -44,7 +44,7 @@ The video was uploaded to [archive dot org](https://archive.org/details/appimage
 
 ### Requirements
 
-The requirements depend on how much you want to do. If you want the full experience, install "yad" (for the UI), "wget" (to grab files from the internet using the UI) and "squashfs-tools" (for dealing with SQUASHFS files)
+The requirements depend on how much you want to do. If you want the full experience, install "yad" (for a GUI instead of a TUI), "wget" (to grab files from the internet using the UI) and "squashfs-tools" (for dealing with SQUASHFS files)
 
 ### Installation instructions
 

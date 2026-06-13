@@ -6,6 +6,6 @@ StartupNotify=false
 Name=AIMGIN, The AppImage Installer
 Comment=Install any AppImage to your system
 Icon=applications-other
-Exec=/usr/lib/aimgin/aimgin.ui_yad.sh
+Exec=/usr/lib/aimgin/aimgin.ui.sh
 Path=/tmp/aimgin.cache
 Categories=System;Other;
