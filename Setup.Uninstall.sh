@@ -6,9 +6,11 @@ set -e
 
 TMP=$(realpath -e "$0")
 CURRDIR=$(dirname "$TMP")
+DPATH_INST="/usr/lib/aimgin"
+DPATH_DESK="/usr/share/applications"
 
-rm -vrf /usr/lib/aimgin/
-rm /usr/share/applications/aimgin.desktop
+rm -vrf "$DPATH_INST"
+rm "$DPATH_DESK"/aimgin.desktop
 
 echo "
 AIMGIN removed"
