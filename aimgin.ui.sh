@@ -40,6 +40,13 @@ MAINPROC=$(basename "$0")
 
 # Essential functions
 
+STR_PRESS_ANY_KEY="
+Press any key to continue"
+function _util_wait_for_any_key () {
+	echo "$STR_PRESS_ANY_KEY"
+	read -n1
+}
+
 function _util_guard() {
 	EC=$1
 	if [ $? -eq $EC ]; then exit 0;fi
@@ -85,7 +92,7 @@ UI_ICON="emblem-package"
 UI_FIELD1="Location"
 UI_FIELD2="Name"
 UI_FIELD3="Do not symlink the app's main binary (or any binaries) into /usr/bin"
-UI_FIELD4="Use general strategy for any AppImage"
+#UI_FIELD4="Use general strategy for any AppImage"
 
 JOB_PARAMS=""
 AIMG_FILEPATH=""
@@ -96,49 +103,70 @@ STR_NAME=""
 CHK_NOSYMLINK=-1
 CHK_ANYAIMG=-1
 
-#function _reset_vars() {
-#	JOB_PARAMS=""
-#	AIMG_FILEPATH=""
-#	LOC_TYPE=0
-#	STR_LOCATION=""
-#	STR_NAME=""
-#	CHK_NOSYMLINK=-1
-#	CHK_ANYAIMG=-1
-#}
+
+USE_YAD=0
+if [ -x /usr/bin/yad ]
+then
+	USE_YAD=1
+fi
 
 function _ui_main() {
 
-	# LOC_TYPE=0
-	# STR_LOCATION=""
-	# STR_NAME=""
-	# CHK_NOSYMLINK=-1
-	# CHK_ANYAIMG=-1
+	#LOC_TYPE=0
+	#STR_LOCATION=""
+	#STR_NAME=""
+	#CHK_NOSYMLINK=-1
+	#CHK_ANYAIMG=-1
 
-	JOB_PARAMS=$(
-		yad --title="$UI_TITLE" \
-			--fixed --center \
-			--width=640 --height=480 \
-			--window-icon="$UI_ICON" \
-			--form \
-			--separator="\n" \
-			--field="$UI_LBL:LBL" \
-			--field="$UI_FIELD1" \
-			--field="$UI_FIELD2" \
-			--field="$UI_FIELD3:CHK" \
-			--field="$UI_FIELD4:CHK"
-	)
-	ECODE=$?
-	echo "$ECODE"
-	echo "$JOB_PARAMS"
 
-	if ! [ $ECODE -eq 0 ]; then return $ECODE;fi
-}
+	FIELD1=""
+	FIELD2=""
+	FIELD3=""
 
-function _get_str_location() {
+	if [ $USE_YAD -eq 1 ]
+	then
+
+		JOB_PARAMS=$(
+			yad --title="$UI_TITLE" \
+				--fixed --center \
+				--width=640 --height=480 \
+				--window-icon="$UI_ICON" \
+				--form \
+				--separator="\n" \
+				--field="$UI_LBL:LBL" \
+				--field="$UI_FIELD1" \
+				--field="$UI_FIELD2" \
+				--field="$UI_FIELD3:CHK"
+		)
+		if ! [ $? -eq 0 ];then exit 0; fi
+
+		FIELD1=$(echo "$JOB_PARAMS"|sed -n 2p)
+		FIELD2=$(echo "$JOB_PARAMS"|sed -n 3p)
+		FIELD3=$(echo "$JOB_PARAMS"|sed -n 4p)
+
+	fi
+
+	if [ $USE_YAD -eq 0 ]
+	then
+
+		clear
+
+		echo "$UI_LBL"
+
+		echo "$UI_FIELD1"
+		read FIELD1
+
+		echo "$UI_FIELD2"
+		read FIELD2
+
+		echo "$UI_FIELD3"
+		read FIELD3
+
+	fi
 
 	# Get STR_Location
 
-	TMP=$(echo "$JOB_PARAMS"|sed -n 2p)
+	TMP="$FIELD1"
 	if [ $(echo "$TMP"|grep "^/"|wc -l) -eq 1 ]; then LOC_TYPE=1;fi
 	if [ $LOC_TYPE -eq 0 ]
 	then
@@ -149,35 +177,75 @@ function _get_str_location() {
 	fi
 	if [ $LOC_TYPE -eq 0 ];then return 1;fi
 	STR_LOCATION="$TMP"
-}
-
-function _get_str_name() {
 
 	# Get STR_NAME (AIMG_NAME)
 
-	TMP=$(echo "$JOB_PARAMS"|sed -n 3p)
+	TMP="$FIELD2"
 	STR_NAME=$(echo "$TMP"|sed -e "s/:/_/g" -e 's/ /_/g' -e "s:/:_:g")
-}
-
-function _get_chk_nosymlink() {
 
 	# Get CHK_NOSYMLINK (NO_SYMLINK)
 
-	TMP=$(echo "$JOB_PARAMS"|sed -n 4p)
-	if [[ "$TMP" == "FALSE" ]]; then CHK_NOSYMLINK=0; fi
-	if [[ "$TMP" == "TRUE" ]]; then CHK_NOSYMLINK=1; fi
+	TMP="$FIELD3"
+	if [ -z "$TMP" ]
+	then
+
+		CHK_NOSYMLINK=1
+
+	else
+
+		if [ $(echo "$TMP"|grep -i -e ^true$ ^y$ -e ^yes$ -e ^yeah$ ^si$|wc -l) -qt 0 ];then CHK_NOSYMLINK=1;fi
+		if [ $(echo "$TMP"|grep -i -e ^false$ ^n$ -e ^no$ -e ^nay$|wc -l) -qt 0 ];then CHK_NOSYMLINK=0;fi
+
+	fi
+
 	if [ $CHK_NOSYMLINK -eq -1 ]; then return 1; fi
+
 }
 
-function _get_chk_anyaimg() {
+#function _get_str_location() {
+#
+#	# Get STR_Location
+#
+#	TMP=$(echo "$JOB_PARAMS"|sed -n 2p)
+#	if [ $(echo "$TMP"|grep "^/"|wc -l) -eq 1 ]; then LOC_TYPE=1;fi
+#	if [ $LOC_TYPE -eq 0 ]
+#	then
+#		if [ $(echo "$TMP"|grep -e "^http://" -e "^https://"|wc -l) -eq 1 ]
+#		then
+#			LOC_TYPE=2
+#		fi
+#	fi
+#	if [ $LOC_TYPE -eq 0 ];then return 1;fi
+#	STR_LOCATION="$TMP"
+#}
 
-	# Get CHK_ANYAIMG (ANY_AIMG)
+#function _get_str_name() {
+#
+#	# Get STR_NAME (AIMG_NAME)
+#
+#	TMP=$(echo "$JOB_PARAMS"|sed -n 3p)
+#	STR_NAME=$(echo "$TMP"|sed -e "s/:/_/g" -e 's/ /_/g' -e "s:/:_:g")
+#}
 
-	TMP=$(echo "$JOB_PARAMS"|sed -n 5p)
-	if [[ "$TMP" == "FALSE" ]]; then CHK_ANYAIMG=0; fi
-	if [[ "$TMP" == "TRUE" ]]; then CHK_ANYAIMG=1; fi
-	if [ $CHK_ANYAIMG -eq -1 ]; then return 1; fi
-}
+#function _get_chk_nosymlink() {
+#
+#	# Get CHK_NOSYMLINK (NO_SYMLINK)
+#
+#	TMP=$(echo "$JOB_PARAMS"|sed -n 4p)
+#	if [[ "$TMP" == "FALSE" ]]; then CHK_NOSYMLINK=0; fi
+#	if [[ "$TMP" == "TRUE" ]]; then CHK_NOSYMLINK=1; fi
+#	if [ $CHK_NOSYMLINK -eq -1 ]; then return 1; fi
+#}
+
+#function _get_chk_anyaimg() {
+#
+#	# Get CHK_ANYAIMG (ANY_AIMG)
+#
+#	TMP=$(echo "$JOB_PARAMS"|sed -n 5p)
+#	if [[ "$TMP" == "FALSE" ]]; then CHK_ANYAIMG=0; fi
+#	if [[ "$TMP" == "TRUE" ]]; then CHK_ANYAIMG=1; fi
+#	if [ $CHK_ANYAIMG -eq -1 ]; then return 1; fi
+#}
 
 function _get_file_from_web() {
 
@@ -224,12 +292,6 @@ function _get_file_from_fs() {
 
 _ui_main
 
-_get_str_location
-
-_get_str_name
-
-_get_chk_nosymlink
-
 if [ $LOC_TYPE -eq 1 ]
 then
 	_get_file_from_fs
@@ -260,33 +322,74 @@ NEXT_STEP="$TMP1"/"aimgin.extractor.sh"
 
 echo "[!] Running extractor"
 
+set +e
+
 chmod +x "$NEXT_STEP"
 "$NEXT_STEP" "$AIMG_FILEPATH"
 
-set -e
+# Show results of the installed application
 
 if [ $? -eq 0 ]
 then
 
-	# Grab results
-
 	AIMG_NAME=$(cat "$CACHEDIR"/"results.AIMG_NAME"|head -n1)
 	AIMG_APPDIR=$(cat "$CACHEDIR"/"results.AIMG_APPDIR"|head -n1)
-	ICON_FILEPATH=$(cat "$CACHEDIR"/"results.ICON_FILEPATH"|head -n1)
 
-	echo "$AIMG_NAME"
-	echo "$AIMG_APPDIR"
-	echo "$ICON_FILEPATH"
+	MSG="SUCCESSFULLY INSTALLED THE APPLICATION\n\nName: $AIMG_NAME\n\nPath: $AIMG_APPDIR"
 
-	yad --title="$UI_TITLE" \
-		--image="$ICON_FILEPATH" \
-		--fixed --center \
-		--width=480 --height=240 \
-		--escape-ok \
-		--window-icon="$UI_ICON" \
-		--text "SUCCESSFULLY INSTALLED THE APPLICATION\n\nName: $AIMG_NAME\n\nPath: $AIMG_APPDIR" \
-		--button="OK"
+
+	if [ $USE_YAD -eq 0 ]
+	then
+
+		clear
+		echo "$MSG"
+
+		_util_wait_for_any_key
+
+	fi
+
+	if [ $USE_YAD -eq 1 ]
+	then
+
+		ICON_FILEPATH=$(cat "$CACHEDIR"/"results.ICON_FILEPATH"|head -n1)
+
+		yad --title="$UI_TITLE" \
+			--window-icon="$UI_ICON" \
+			--width=480 --height=240 \
+			--fixed --center \
+			--escape-ok \
+			--image="$ICON_FILEPATH" \
+			--text "$MSG" \
+			--button="OK"
+
+	fi
 
 	rm "$CACHEDIR"/results.*
+
+	exit 0
+
+fi
+
+# In case of error
+
+MSG="There has been an error"
+
+if [ $USE_YAD -eq 0 ]
+then
+
+	echo "$MSG"
+	_util_wait_for_any_key
+
+fi
+if [ $USE_YAD -eq 1 ]
+then
+
+	yad --title="$UI_TITLE" \
+		--window-icon="$UI_ICON" \
+		--width=320 --height=160 \
+		--fixed --center \
+		--escape-ok \
+		--text "$MSG" \
+		--button="OK"
 
 fi
