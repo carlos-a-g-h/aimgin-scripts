@@ -102,6 +102,11 @@ AIMG_DESKTOP=""
 function _action_Get_AIMG_DESKTOP() {
 
 	SEL_APPDIR="$TMP_DIR"
+
+	echo "reerere"
+
+	ls "$TMP_DIR"
+
 	if ! [ $(find "$SEL_APPDIR"|grep ".desktop$"|wc -l) -eq 1 ]; then _util_explode "Desktop file not found???";fi
 	XXX=$(find "$SEL_APPDIR"|grep ".desktop$"|head -n1)
 	AIMG_DESKTOP=$(realpath -e "$XXX")
@@ -191,13 +196,13 @@ function _action_Decompress() {
 	if [ -d "$TMP" ] || [ -f "$TMP" ]
 	then
 		if [ $FORCE -eq 0 ]; then _util_explode "Remove this yourself: $TMP";fi
-		rm -vrf "$TMP"
+		rm -rf "$TMP"
 	fi
 	TMP="AppDir"
 	if [ -d "$TMP" ] || [ -f "$TMP" ]
 	then
 		if [ $FORCE -eq 0 ]; then _util_explode "Remove this yourself: $TMP";fi
-		rm -vrf "$TMP"
+		rm -rf "$TMP"
 	fi
 
 	chmod +x "$AIMG_FILEPATH"
@@ -216,7 +221,7 @@ function _action_Decompress() {
 		if [ -d "AppDir" ]; then TMP=$(realpath -e "AppDir"); fi
 	fi
 	if [ -z "$TMP" ]; then _util_explode "I cant't find the decompressed AppImage, wtf";fi
-	if [ -d "$TMP_DIR" ]; then rm -vrf $TMP_DIR; fi
+	if [ -d "$TMP_DIR" ]; then rm -rf $TMP_DIR; fi
 	mv -f -T "$TMP" "$TMP_DIR"
 }
 
@@ -258,7 +263,7 @@ AIMG_NAME="$TMP"
 # Rename AppDIr
 
 AIMG_APPDIR="$APPSDIR"/"$AIMG_NAME"".installed"
-if [ -d "$AIMG_APPDIR" ]; then rm -vrf "$AIMG_APPDIR";fi
+if [ -d "$AIMG_APPDIR" ]; then rm -rf "$AIMG_APPDIR";fi
 mv -v -T "$TMP_DIR" "$AIMG_APPDIR"
 
 # Adapt AIMG_DESKTOP variable to the new AppDir
