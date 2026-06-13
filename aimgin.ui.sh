@@ -38,6 +38,9 @@ set +e
 
 MAINPROC=$(basename "$0")
 
+USE_YAD=0
+if [ -x /usr/bin/yad ]; then USE_YAD=1; fi
+
 # Essential functions
 
 STR_PRESS_ANY_KEY="
@@ -102,13 +105,6 @@ STR_LOCATION=""
 STR_NAME=""
 CHK_NOSYMLINK=-1
 CHK_ANYAIMG=-1
-
-
-USE_YAD=0
-if [ -x /usr/bin/yad ]
-then
-	USE_YAD=1
-fi
 
 function _ui_main() {
 
@@ -193,8 +189,8 @@ function _ui_main() {
 
 	else
 
-		if [ $(echo "$TMP"|grep -i -e ^true$ ^y$ -e ^yes$ -e ^yeah$ ^si$|wc -l) -qt 0 ];then CHK_NOSYMLINK=1;fi
-		if [ $(echo "$TMP"|grep -i -e ^false$ ^n$ -e ^no$ -e ^nay$|wc -l) -qt 0 ];then CHK_NOSYMLINK=0;fi
+		if [ $(echo "$TMP"|grep -i -e "^true$" -e "^y$" -e "^yes$" -e "^yeah$" "^si$"|wc -l) -qt 0 ];then CHK_NOSYMLINK=1;fi
+		if [ $(echo "$TMP"|grep -i -e "^false$" -e "^n$" -e "^no$" -e "^nay$"|wc -l) -qt 0 ];then CHK_NOSYMLINK=0;fi
 
 	fi
 
@@ -342,7 +338,7 @@ then
 	then
 
 		clear
-		echo "$MSG"
+		echo -e "$MSG"
 
 		_util_wait_for_any_key
 
@@ -377,7 +373,7 @@ MSG="There has been an error"
 if [ $USE_YAD -eq 0 ]
 then
 
-	echo "$MSG"
+	echo -e "$MSG"
 	_util_wait_for_any_key
 
 fi
