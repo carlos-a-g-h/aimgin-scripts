@@ -103,10 +103,6 @@ function _action_Get_AIMG_DESKTOP() {
 
 	SEL_APPDIR="$TMP_DIR"
 
-	echo "reerere"
-
-	ls "$TMP_DIR"
-
 	if ! [ $(find "$SEL_APPDIR"|grep ".desktop$"|wc -l) -eq 1 ]; then _util_explode "Desktop file not found???";fi
 	XXX=$(find "$SEL_APPDIR"|grep ".desktop$"|head -n1)
 	AIMG_DESKTOP=$(realpath -e "$XXX")

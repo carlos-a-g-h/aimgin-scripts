@@ -189,7 +189,7 @@ function _ui_main() {
 
 	else
 
-		if [ $(echo "$TMP"|grep -i -e "^true$" -e "^y$" -e "^yes$" -e "^yeah$" "^si$"|wc -l) -gt 0 ];then CHK_NOSYMLINK=1;fi
+		if [ $(echo "$TMP"|grep -i -e "^true$" -e "^y$" -e "^yes$" -e "^yeah$" -e "^si$"|wc -l) -gt 0 ];then CHK_NOSYMLINK=1;fi
 		if [ $(echo "$TMP"|grep -i -e "^false$" -e "^n$" -e "^no$" -e "^nay$"|wc -l) -gt 0 ];then CHK_NOSYMLINK=0;fi
 
 	fi
